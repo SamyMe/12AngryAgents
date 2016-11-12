@@ -1,6 +1,6 @@
 ### Modeling **12 Angry Men** movie using Jade Multy Agent Platform
 
-*parseScript.py* : Extracts the dialogs.
+*parseScript.py* : Extracts the dialogs and dumping it into json file.
 
 *MainContainer.java* : Launches the main container
 

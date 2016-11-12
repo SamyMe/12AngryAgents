@@ -1,28 +1,25 @@
+# -*- coding: utf-8 -*-
+# Removing all \(.*\)
+# Replacing ’  with  '
+# Removing Guard's part
+import json
 
-start = False
+debateData = []
 
-with open("script12AM") as data_file:
+with open("script12AM-noparentheses") as data_file:
     for line in data_file:
         line = line.split(".")
 
-        # THE BEGGINING OF THE DEBATE
-        if not start:
-            if line[0] == "SEVEN (to SIX)":
-                start = True
-            else :
-                continue
-
         talk = line[0].split(" ")
-        print talk
-        speaker = talk[0]
-        if len(talk)>2:
-            receiver = talk[2][:-1]
-        else :
-            receiver = ""
+        speaker = line[0]
+        says = ".".join(line[1:])
 
         if not (speaker.isupper() and speaker.isalpha()):
             continue
 
-        print speaker+"   TO   "+receiver
+        print speaker+"   SAID   "+says
+        debateData.append([speaker, says])
 
-
+print "Creating JSON file"
+with open("debate.json", 'w') as debateFile:
+    json.dump(debateData, debateFile, indent=4)
