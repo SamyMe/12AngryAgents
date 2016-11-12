@@ -1,4 +1,8 @@
-[
+{
+    [
+        "GUARD", 
+        " Okay, gentlemen. Everybody's here. If there's anything you want, I'm right outside. Just knock. \n"
+    ], 
     [
         "FIVE", 
         " I never knew they locked the door.\n"
@@ -836,6 +840,10 @@
         " He said fifteen. He was positive about it.\n"
     ], 
     [
+        "GUARD", 
+        " This what you wanted?\n"
+    ], 
+    [
         "FOREMAN", 
         " That's right. Thank you.\n"
     ], 
@@ -990,6 +998,10 @@
     [
         "EIGHT", 
         " You're a sadist.\n"
+    ], 
+    [
+        "GUARD", 
+        " Is there anything wrong, gentlemen? I heard some noise.\n"
     ], 
     [
         "FOREMAN", 
@@ -1503,4 +1515,4 @@
         "NINE", 
         " It takes a great deal of courage to stand alone.\n"
     ]
-]
+}
