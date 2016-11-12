@@ -34,13 +34,13 @@ public class JadeContainer {
             	
             }
             
+            // About Container
 			Runtime rt = Runtime.instance();
-			
 			ProfileImpl pc = new ProfileImpl(false);
 			pc.setParameter(ProfileImpl.MAIN_HOST, "localhost");
-			
 			AgentContainer container = rt.createAgentContainer(pc);
 			
+			// Creating Agent
 			AgentController agentControler = container.createNewAgent(
 											"Jury1", "JuryMember", new Object[]{}
 											);
