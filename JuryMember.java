@@ -26,9 +26,11 @@ import jade.lang.acl.MessageTemplate;
 public class JuryMember extends Agent {
 
 	private float certainty;
+	// Message sender's certainty
 	private float certainty2;
 	private float resistance ;
 	private String myname; 
+	// If a lot of messages in cue, don't send another one (not sure it works)
 	private Boolean shutUp = false;
 	 
 	@Override
@@ -38,6 +40,7 @@ public class JuryMember extends Agent {
 		certainty = Float.parseFloat((String)args[0]);
 		resistance = Float.parseFloat((String)args[1]);
 				
+		// Agent's name
 		myname = this.getAID().getLocalName();
 		System.out.println("Hello I'm a Jury Member " + myname);
 		
@@ -61,13 +64,13 @@ public class JuryMember extends Agent {
 			public void action() {
 			
 //				Sleep for better readability
-
-				try {
-					TimeUnit.SECONDS.sleep(1);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+//
+//				try {
+//					TimeUnit.SECONDS.sleep(1);
+//				} catch (InterruptedException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 
 				
 		        // GET LIST OF ALL AGENTS
@@ -84,13 +87,14 @@ public class JuryMember extends Agent {
 		        // SEND MESSAGE TO ALL AGENTS
 		        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 				for (int i = 0; i < agents.length; i++) {
+					
+					// Don't send message to myself, and shutup if others are talking
 					if(agents[i].getName().getLocalName() != myname && ! shutUp){
 						msg.addReceiver(agents[i].getName());	
 						msg.setLanguage("English");
 						msg.setOntology(myname);
 						msg.setContent( Float.toString(certainty));
 						send(msg);			
-						// System.out.print(myname+" envoi le message a "+agents[i].getName().getLocalName() +"\n");
 					}				
 				}
 				
@@ -133,15 +137,16 @@ public class JuryMember extends Agent {
 			System.out.println(myname+" certainty is : "+Float.toString(certainty));
 					
 
+			// Write certainty value to file
 			try {
 			    Files.write(Paths.get("/home/sam/workspace/12AngryMen/results"), (myname+","+Float.toString(certainty)+"\n").getBytes(), StandardOpenOption.APPEND);
 			}catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+			    //exception handeling ...
 			}
 			
-		
-			
 			System.out.print( Float.toString(certainty)+"\n");
+			
+			// If certainty above threshold, agent says he believes and stops 
 			if(certainty>0.5 && !myname.contains("SEVEN") ){
 				System.out.println(myname+" believe the kid is Innoncent !!\n");
 				doDelete();
