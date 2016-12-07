@@ -139,7 +139,7 @@ public class JuryMember extends Agent {
 
 			// Write certainty value to file
 			try {
-			    Files.write(Paths.get("/home/sam/workspace/12AngryMen/results"), (myname+","+Float.toString(certainty)+"\n").getBytes(), StandardOpenOption.APPEND);
+			    Files.write(Paths.get("../results"), (myname+","+Float.toString(certainty)+"\n").getBytes(), StandardOpenOption.APPEND);
 			}catch (IOException e) {
 			    //exception handeling ...
 			}

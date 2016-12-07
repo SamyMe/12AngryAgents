@@ -27,7 +27,7 @@ public class JadeContainer {
 		// Empty the file
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter("/home/sam/workspace/12AngryMen/results", "UTF-8");
+			writer = new PrintWriter("../results", "UTF-8");
 		} catch (FileNotFoundException | UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -67,7 +67,7 @@ public class JadeContainer {
 		
         // READ JSON FILE
 		try {
-			org.json.simple.JSONArray obj = (org.json.simple.JSONArray) parser.parse(new FileReader("/home/sam/workspace/12AngryMen/src/debate.json"));
+			org.json.simple.JSONArray obj = (org.json.simple.JSONArray) parser.parse(new FileReader("src/debate.json"));
             for (Object o : obj)
             	{
             	org.json.simple.JSONArray orray = (org.json.simple.JSONArray)  o;
