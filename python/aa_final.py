@@ -124,6 +124,7 @@ if __name__ == "__main__":
     run(agents, simple_viz)
     xs = range(len(speakers))
     for a in agents:
-        plt.plot(xs, a.hist)
+        plt.plot(xs, a.hist, label=("agent " + str(a.id)))
     plt.plot(xs, [.7 for _ in range(len(speakers))])  # to visualoize the threshold
+    plt.legend(loc="lower right")
     plt.show()
