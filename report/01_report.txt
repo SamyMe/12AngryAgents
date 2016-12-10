@@ -1,0 +1,86 @@
+
+INTRODUCTION
+    The purpose of this report is to show how the movie _12 Angry Men_ can be modelled as a multi-agent system.
+    - Part 1 will discuss the modelling itself (i.e. what defines the agents and their behavior) as well as the consequences of this modelling on the dynamics of the system.
+    - Part 2 explains how a python script has been used to process the data before using jade. It has been useful in two ways:
+        - to confirm that the model actually works by means of quicky visualization.
+        - and to parametrize the agents in a way that can then be used in jade.
+    - Part 3 describes the implementation in jade as a proper multi-agent system (where each agent is autonomous).
+
+
+
+PART ONE: MODELLING THE MOVIE AND THE RULES OF ITS WORLD
+
+    The "12 angry men" of the movie are all members of a jury that deliberates the guilt of a young boy in a murder case. At the beginning, 11 out of the 12 men think that the boy is guilty. Jury number 8 has a few reservations and argues that there is "reasonable doubt". A long discussion ensues and, eventually, every jury members ends up believing that the boy may _not_ be guilty.
+
+    In order to model the movie as a multi-agent system, the behavior of each agent has to be simulated in some way. In a very basic sense, the agents can be defined by only two variables:
+        - a level of certainty (between 0 and 1) that changes over time. When an agent has a certainty of 0 this means that it is absolutely convinced that the boy is guilty. And at 1, it thinks the boy is innocent.
+        - a level of receptiveness (also between 0 and 1) that stays constant. An agent that has a receptiveness of 0 never changes its mind. And on the contrary, an agent that has a receptiveness of 1 is instantly convinced by the words of other agents.
+
+    Each time an agent "speaks" it has some influence on the other agents. Depending on their level of receptiveness, the other agents will ajust their certainty slightly toward the one of the agent speaking. Here is the simplest update rule that could model this (in python):
+        def listen_to(self, speaker):
+            self.certainty += self.receptiveness * (speaker.certainty - self.certainty)
+    The certainty of all the agents therefore changes over time depending on who is speaking. Above a given threshold (of 0.7) they believe the boy to be innocent.
+
+    In practice the certainty of the agents can vary wildly and be very noisy. To prevent this from happening the change in certainty (i.e. the receptiveness) has been coded asymmetrically. The agents tend to have a higher level of receptiveness when their certainty is rising, and a lower level of receptiveness when their certainty is decreasing. Another way to see why this choice of implementation has been made is just to notice that it prevents flip-flops (so that agents don't change their minds too often).
+
+    Finally, in the movie, the discussion unfolded in a specific way. This information has not been used in the jade implementation to better reflect the distributed nature of multi-agent systems (see part 3). But it has been used in the python script (see part 2). The screenplay has been analyzed manually to extract two important pieces of information:
+        - the order in which each agent spoke.
+        - and at which moment they changed their minds.
+
+
+
+PART TWO: VISUALIZING THE MOVIE TO UNDERSTAND THE AGENTS BETTER
+
+    A python script as been written (twelve_agents.py) whose purpose is twofold:
+        - first it is there to confirm that the update rule is actually correct by means of visualization.
+        - and second it is used to _parameterized_ each agent (which is another way of saying figuring out what level of receptiveness describes them best).
+    All of the computations performed in the python script are not distributed in any way (so this is not a multi-agent system per se). How the system can be modelled more realistically in jade to satisfy this property is explored in part 3.
+
+    To launch the simulation of the screensplay a random level of receptiveness is assigned to all the agents (except for jury member 8 that has a receptiveness of 0). The agents also start with a certainty of 0 because the movie begins with them believing that the boy is guily. Jury member 8 on the other hand starts (and will stay) at a certainty of 0.9 (he mostly believes that the boy is innocent but also repeatedly says that he "doesn't know").
+
+    In the _run()_ function of the python script all the agents speak _in order_ in a loop. Each time an agent speaks it influences the certainty of all the other agents. There are two ways to visualize the discussion.
+        - In the first plot (cf. FIG 1) the certainty of the agents is plotted simply over time. Each time all the curves increase quickly is a moment when jury member 8 speaks repeatedly to make his case.
+            python3 twelve_agents.py
+        - The second plot (cf. FIG 2) is just like the first one except that when an agent crosses the threshold it goes to one immediately. This is just to visualize more clearly which agent changed its mind in what order.
+            python3 twelve_agents.py -s
+
+    The second main use of the python script was to figure out what is the level of receptiveness of each agent.
+        python3 twelve_agents.py -o -v
+    In the _optimize_rs()_ function each agent starts with a random level of receptiveness (except for jury member 8 as said before). A complete run through the script is then done which makes a comparison possible between the moment the agents changed their minds in the movie and according to the model. If an agent changed its mind too early its receptiveness is decreased. And vice versa, if an agent changed its mind too late its receptiveness is increased. In the end, the most accurate receptiveness of each agent is printed.
+
+
+
+PART THREE: MAKING THE AGENTS AUTONOMOUS WITH JADE
+
+    In the java implementation, the certainty, receptiveness and threshold are exactly identical to the python implementation. But the order in which each agent speaks is not respected anymore. This is a consequence of the fact that in jade each agent is _autonomous_ like in real multi-agent systems.
+
+    The java code is made of 2 classes:
+        - JadeContainer.java is the container that creates and contains the agents.
+        - JuryMember.java defines the jury members (the multi-agent system is homogeneous).
+    The Message reception was implemented as a “cyclic” behavior. If there is a message to read the agent reads it and updates its level of certainty, otherwise, the _block()_ function is executed to stop the cyclic behavior until reception of a new message.
+
+    In order not to overload the system, the sending of messages was implemented as an _onTick_ behavior that gets activated every 500ms. The messages sent between the agents are of type “Inform” since each agent is trying to make the others aware of some facts while speaking. Each time an agent hears the claims of another agent (by receiving a message from him), it updates its certainty according to the update rule discussed in part 1.
+
+    The sniffer tool that Jade's graphical interface proposes gives a good visualization of the interactions between the agents (cf. FIG 3). The certainty of the agents over time can also be plotted (cf. FIG 4). The order in which the agents change their minds is not preserved but (like in the python script) if an agent has a small receptiveness (like jury member 3 in the movie) it tends to change its mind more slowly.
+
+
+
+CONCLUSION
+    The dynamics of the movie have been successfully captured.
+
+    There are many ways to improve the model in order to better reflect the movie. Here are 3 examples:
+        - The communication between the agents could be modelled in a "one-to-one" fashion (instead of the "one-to-all" way that has been used here).
+        - The receptiveness of each agent could be a function of their level of certainty.
+        - And a graphical interface could help the user visualize the communications better.
+
+
+
+ARCHI:
+    img/ all the screen shots
+    java/
+    python/
+    .pdf report
+
+TODO:
+    as vs like

@@ -91,9 +91,9 @@ def optimize_rs(verbosity):
         run(agents, False)
 
         if verbosity:
-            print(", ".join(str(changes[a.id]) for a in agents))
-            print(", ".join(str(a.change) for a in agents))
-            print(", ".join(str(a.r) for a in agents))
+            print("changes (movie):", ", ".join(str(changes[a.id]) for a in agents))
+            print("changes (model):", ", ".join(str(a.change) for a in agents))
+            print("receptivenesses:", ", ".join(str(a.r) for a in agents))
             print()
         else:
             print("\r" + str(i) + "/" + str(length), end="")
